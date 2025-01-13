@@ -1,0 +1,13 @@
+package components
+
+import "github.com/dudubtw/receipt/constants"
+
+templ AddCateogryButton() {
+	@Button(ButtonProps{
+		Class: "fixed bottom-[40px] right-[40px] shadow-lg",
+		Size:  ButtonSizeLargeIcon,
+		Id:    constants.IdAddCategoryButton,
+	}) {
+		<i class="text-purple-100" data-lucide="plus"></i>
+	}
+}

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background-900: 256 26% 8%;
+    --background-800: 249 21% 12%;
+    --background-700: 257 26% 16%;
+  }
+
+  body {
+    @apply antialiased text-gray-50;
+    font-family: "Inter", sans-serif;
+
+    background-color: hsl(var(--background-900));
+  }
+
+  * {
+    user-select: none;
+    box-sizing: border-box;
+  }
+}

@@ -1,0 +1,40 @@
+package components
+
+import "github.com/dudubtw/receipt/constants"
+
+type AddCategoryModalProps struct {
+	IsOpen bool
+}
+
+templ AddCategoryModal(props AddCategoryModalProps) {
+	<div id={ constants.IdAddCategoryModal }>
+		if props.IsOpen {
+			<div class="fixed inset-0 w-full h-full bg-black flex items-center justify-center">
+				@AddCategoryModalContent()
+			</div>
+		}
+	</div>
+}
+
+templ AddCategoryModalContent() {
+	<div class="bg-background-700 rounded-lg relative px-12 py-8 flex flex-col gap-8 w-full max-w-[440px]">
+		<button class="text-gray-50 absolute top-4 right-4" aria-label="Fechar modal">
+			<i data-lucide="x" class="text-red-500"></i>
+		</button>
+		<h2 class="font-bold">Adicionar comprovante</h2>
+		<form class="flex flex-col gap-8">
+			<div class="flex gap-4">
+				<img src="https://pbs.twimg.com/media/GhA9ILJbgAA_H5m?format=jpg&name=large" class="w-24 h-[124px] rounded"/>
+				<div>
+					<label for="category-name" class="text-gray-50">Nome da categoria</label>
+					<input id="category-name" type="text" class="rounded-md p-2 bg-background-800 text-gray-50"/>
+				</div>
+			</div>
+			@Button(ButtonProps{
+				Size: ButtonSizeLarge,
+			}) {
+				Adicionar
+			}
+		</form>
+	</div>
+}

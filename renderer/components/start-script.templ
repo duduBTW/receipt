@@ -1,0 +1,9 @@
+package components
+
+script StartScript(functionNames ...string) {
+  window.start = function() {
+    functionNames.forEach(functionName => {
+      window[functionName]()
+    })
+  }
+}

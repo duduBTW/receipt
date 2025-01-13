@@ -1,0 +1,87 @@
+package components
+
+import "strings"
+
+type ButtonProps struct {
+	Class       string
+	Variant     string
+	Size        string
+	Type        string
+	Disabled    bool
+	Placeholder string
+	Id          string
+}
+
+const (
+	ButtonVariantPrimary     = "primary"
+	ButtonVariantSecondary   = "secondary"
+	ButtonVariantDestructive = "destructive"
+	ButtonVariantOutline     = "outline"
+	ButtonVariantGhost       = "ghost"
+	ButtonVariantLink        = "link"
+
+	ButtonSizeSmall     = "sm"
+	ButtonSizeLarge     = "lg"
+	ButtonSizeLargeIcon = "lg-icon"
+	ButtonSizeIcon      = "icon"
+)
+
+func getButtonVariants(props ButtonProps) string {
+	baseClasses := "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+
+	var variantClass string
+	switch props.Variant {
+	case ButtonVariantDestructive:
+		variantClass = "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+	case ButtonVariantOutline:
+		variantClass = "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
+	case ButtonVariantSecondary:
+		variantClass = "bg-sec text-sec-foreground hover:bg-sec/80"
+	case ButtonVariantGhost:
+		variantClass = "hover:bg-accent hover:text-accent-foreground"
+	case ButtonVariantLink:
+		variantClass = "text-primary underline-offset-4 hover:underline"
+	default:
+		variantClass = "bg-purple-700 text-grey-50 hover:bg-purple-800"
+	}
+
+	var sizeClass string
+	switch props.Size {
+	case ButtonSizeSmall:
+		sizeClass = "h-9 rounded-md px-4"
+	case ButtonSizeLarge:
+		sizeClass = "h-11 rounded-md px-8"
+	case ButtonSizeLargeIcon:
+		sizeClass = "h-[56px] w-[56px]"
+	case ButtonSizeIcon:
+		sizeClass = "h-10 w-10"
+	default:
+		sizeClass = "h-10 px-4 py-2"
+	}
+
+	classes := []string{baseClasses, variantClass, sizeClass}
+	if props.Class != "" {
+		classes = append(classes, props.Class)
+	}
+
+	return strings.Join(classes, " ")
+}
+
+func ButtonType(props ButtonProps) string {
+	if props.Type == "" {
+		return "button"
+	}
+	return props.Type
+}
+
+templ Button(props ButtonProps) {
+	<button
+		id={ props.Id }
+		type={ ButtonType(props) }
+		class={ getButtonVariants(props) }
+		placeholder={ props.Placeholder }
+		disabled?={ props.Disabled }
+	>
+		{ children... }
+	</button>
+}

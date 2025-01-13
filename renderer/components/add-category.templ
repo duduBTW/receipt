@@ -1,0 +1,10 @@
+package components
+
+var AddCategoryModalDefaultProps = AddCategoryModalProps{
+	IsOpen: false,
+}
+
+templ AddCategory() {
+	@AddCateogryButton()
+	@AddCategoryModal(AddCategoryModalDefaultProps)
+}
