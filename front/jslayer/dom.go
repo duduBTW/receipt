@@ -13,6 +13,8 @@ import (
 	"github.com/a-h/templ"
 )
 
+const Window = "string"
+
 func GetElementById(id string) (js.Value, error) {
 	element := js.Global().Get("document").Call("getElementById", id)
 	if IsNil(element) {
@@ -23,6 +25,10 @@ func GetElementById(id string) (js.Value, error) {
 }
 
 func QuerySelector(selector string) (js.Value, error) {
+	if selector == Window {
+		return js.Global(), nil
+	}
+
 	element := js.Global().Get("document").Call("querySelector", selector)
 	if IsNil(element) {
 		return element, errors.New("Element not found")
@@ -32,7 +38,14 @@ func QuerySelector(selector string) (js.Value, error) {
 }
 
 func QuerySelectorAll(selector string) ([]js.Value, error) {
-	nodeList := js.Global().Get("document").Call("querySelectorAll", selector)
+	return ElementQuerySelectorAll(js.Global().Get("document"), selector)
+}
+func ElementQuerySelectorAll(element js.Value, selector string) ([]js.Value, error) {
+	if selector == Window {
+		return []js.Value{js.Global()}, nil
+	}
+
+	nodeList := element.Call("querySelectorAll", selector)
 	if IsNil(nodeList) {
 		return nil, errors.New("Element not found")
 	}
@@ -56,6 +69,7 @@ func Id(id string) string {
 }
 
 func GetStringAttr(selector string, attr string) (string, error) {
+
 	element := js.Global().Get("document").Call("querySelector", selector)
 	if IsNil(element) {
 		return "", errors.New("Element not found")
@@ -154,4 +168,9 @@ func RegisterFunction(name string, function func() func()) {
 
 func CreateIcons() {
 	js.Global().Get("lucide").Call("createIcons")
+}
+
+func IsFocused(element js.Value) bool {
+	activeElement := js.Global().Get("document").Get("activeElement")
+	return activeElement.Equal(element)
 }

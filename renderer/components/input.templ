@@ -1,0 +1,37 @@
+package components
+
+import "strings"
+
+type InputProps struct {
+	Class       string
+	Type        string
+	Placeholder string
+	Id          string
+	Disabled    bool
+	Label       string
+}
+
+func getInputClasses(props InputProps) string {
+	baseClasses := "px-[10px] pb-2 bg-transparent text-gray-50 transition-colors  disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none"
+
+	if props.Class != "" {
+		return strings.Join([]string{baseClasses, props.Class}, " ")
+	}
+	return baseClasses
+}
+
+templ Input(props InputProps) {
+	<div class="rounded-md bg-background-800 border border-gray-700 flex flex-col focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+		if props.Label != "" {
+			<label for={ props.Id } class="text-xs text-gray-400 font-bold px-[10px] pt-2">{ props.Label }</label>
+		}
+		<input
+			style=""
+			id={ props.Id }
+			type={ props.Type }
+			class={ getInputClasses(props) }
+			placeholder={ props.Placeholder }
+			disabled?={ props.Disabled }
+		/>
+	</div>
+}

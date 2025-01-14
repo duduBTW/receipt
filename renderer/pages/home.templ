@@ -63,12 +63,12 @@ css categoryColor(category db.Category, Lightness int) {
 }
 
 templ CategoryCard(category db.Category) {
-	<button class={ categoryBackground(category, 10), "px-[10px] py-2 rounded flex items-center gap-[10px] bg-[var(--category-bg)] hover:bg-[var(--category-bg-hover)] transition-colors", }>
+	<div class={ categoryBackground(category, 10), "px-[10px] py-2 rounded flex items-center gap-[10px] bg-[var(--category-bg)] hover:bg-[var(--category-bg-hover)] transition-colors", }>
 		<div class="bg-background-900 w-10 h-10 rounded-full flex items-center justify-center">
 			<i data-lucide={ category.LucideIconName } class={ categoryColor(category, 40) }></i>
 		</div>
-		<h2 class="font-bold">
+		<a class="font-semibold">
 			{ category.Name }
-		</h2>
-	</button>
+		</a>
+	</div>
 }
