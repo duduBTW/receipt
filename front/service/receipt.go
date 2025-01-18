@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"syscall/js"
 
+	"github.com/dudubtw/receipt/constants"
 	"github.com/dudubtw/receipt/front/jslayer"
 	"github.com/dudubtw/receipt/models"
 )
@@ -32,7 +33,7 @@ func UploadRecepit(receipt models.NewReceipt, file js.Value) (models.Receipt, er
 	}
 
 	go func() {
-		promise := js.Global().Call("fetch", "/upload", js.ValueOf(opts))
+		promise := js.Global().Call("fetch", constants.ApiUpload, js.ValueOf(opts))
 
 		json := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 			receiptJSON := args[0]
