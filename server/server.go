@@ -77,7 +77,7 @@ func ParseNewReceipt(request *http.Request) (models.NewReceipt, error) {
 }
 
 func UploadHandler() {
-	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(constants.ApiUpload, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
