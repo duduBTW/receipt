@@ -161,7 +161,9 @@ func SetCssVar(element js.Value, name, value string) {
 
 func RegisterFunction(name string, function func() func()) {
 	js.Global().Set(name, js.FuncOf(func(this js.Value, args []js.Value) any {
-		function()
+		go func() {
+			function()
+		}()
 		return nil
 	}))
 }
@@ -173,4 +175,12 @@ func CreateIcons() {
 func IsFocused(element js.Value) bool {
 	activeElement := js.Global().Get("document").Get("activeElement")
 	return activeElement.Equal(element)
+}
+
+type JSON struct {
+	Value js.Value
+}
+
+func (json JSON) Stringify() string {
+	return js.Global().Get("JSON").Call("stringify", json.Value).String()
 }

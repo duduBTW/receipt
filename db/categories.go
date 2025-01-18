@@ -3,24 +3,15 @@ package db
 import (
 	"context"
 	"database/sql"
-	"time"
+
+	"github.com/dudubtw/receipt/models"
 )
 
-type Category struct {
-	ID             int64     `db:"id"`
-	Name           string    `db:"name"`
-	LucideIconName string    `db:"lucide_icon_name"`
-	Hue            int       `db:"hue"`
-	Saturation     int       `db:"saturation"`
-	Lightness      int       `db:"lightness"`
-	CreatedAt      time.Time `db:"created_at"`
-}
-
 type CategoryStore interface {
-	CreateCategory(ctx context.Context, category *Category) error
-	GetCategory(ctx context.Context, id int64) (*Category, error)
-	ListCategories(ctx context.Context) ([]Category, error)
-	UpdateCategory(ctx context.Context, category *Category) error
+	CreateCategory(ctx context.Context, category *models.Category) error
+	GetCategory(ctx context.Context, id int64) (*models.Category, error)
+	ListCategories(ctx context.Context) ([]models.Category, error)
+	UpdateCategory(ctx context.Context, category *models.Category) error
 	DeleteCategory(ctx context.Context, id int64) error
 }
 
@@ -32,7 +23,7 @@ func NewSQLiteCategoryStore(db *sql.DB) *SQLiteCategoryStore {
 	return &SQLiteCategoryStore{db: db}
 }
 
-func (s *SQLiteCategoryStore) CreateCategory(ctx context.Context, category *Category) error {
+func (s *SQLiteCategoryStore) CreateCategory(ctx context.Context, category *models.Category) error {
 	query := `
         INSERT INTO categories (name, lucide_icon_name, hue, saturation, lightness)
         VALUES (?, ?, ?, ?, ?)
@@ -49,8 +40,8 @@ func (s *SQLiteCategoryStore) CreateCategory(ctx context.Context, category *Cate
 	).Scan(&category.ID, &category.CreatedAt)
 }
 
-func (s *SQLiteCategoryStore) GetCategory(ctx context.Context, id int64) (*Category, error) {
-	category := &Category{}
+func (s *SQLiteCategoryStore) GetCategory(ctx context.Context, id int64) (*models.Category, error) {
+	category := &models.Category{}
 	query := `SELECT id, name, lucide_icon_name, hue, saturation, lightness, created_at FROM categories WHERE id = ?`
 
 	err := s.db.QueryRowContext(ctx, query, id).Scan(
@@ -68,7 +59,7 @@ func (s *SQLiteCategoryStore) GetCategory(ctx context.Context, id int64) (*Categ
 	return category, err
 }
 
-func (s *SQLiteCategoryStore) ListCategories(ctx context.Context) ([]Category, error) {
+func (s *SQLiteCategoryStore) ListCategories(ctx context.Context) ([]models.Category, error) {
 	query := `SELECT id, name, lucide_icon_name, hue, saturation, lightness FROM categories`
 
 	rows, err := s.db.QueryContext(ctx, query)
@@ -77,9 +68,9 @@ func (s *SQLiteCategoryStore) ListCategories(ctx context.Context) ([]Category, e
 	}
 	defer rows.Close()
 
-	var categories []Category
+	var categories []models.Category
 	for rows.Next() {
-		var category Category
+		var category models.Category
 		if err := rows.Scan(
 			&category.ID,
 			&category.Name,
@@ -95,7 +86,7 @@ func (s *SQLiteCategoryStore) ListCategories(ctx context.Context) ([]Category, e
 	return categories, rows.Err()
 }
 
-func (s *SQLiteCategoryStore) UpdateCategory(ctx context.Context, category *Category) error {
+func (s *SQLiteCategoryStore) UpdateCategory(ctx context.Context, category *models.Category) error {
 	query := `
         UPDATE categories 
         SET name = ?, lucide_icon_name = ?, hue = ?, saturation = ?, lightness = ?

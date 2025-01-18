@@ -25,7 +25,9 @@ func (event *EventListener) Add() {
 	registerdEventListener := RegisterdEventListener{
 		EventListener: *event,
 		jsListener: js.FuncOf(func(this js.Value, args []js.Value) any {
-			event.Listener(this, args)
+			go func() {
+				event.Listener(this, args)
+			}()
 			return nil
 		}),
 	}

@@ -5,6 +5,7 @@ package handlers
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"syscall/js"
 	"time"
@@ -12,6 +13,8 @@ import (
 	"github.com/a-h/templ"
 	"github.com/dudubtw/receipt/constants"
 	jslayer "github.com/dudubtw/receipt/front/jslayer"
+	"github.com/dudubtw/receipt/front/service"
+	"github.com/dudubtw/receipt/models"
 	"github.com/dudubtw/receipt/renderer/components"
 )
 
@@ -77,6 +80,17 @@ func modalFocusTrapFactory() jslayer.EventListener {
 func CreateModalSetup() func() {
 	var modalState jslayer.StateProps[components.AddCategoryModalProps]
 	var modalFocusTrapEvent = modalFocusTrapFactory()
+	var selectedCategory = ""
+
+	var categorySelect = CategorySelect{
+		Id:           constants.IdAddCategoryCategorySelect,
+		DefaultValue: selectedCategory,
+		OnValueChange: func(s string) {
+
+			fmt.Println("Selected category:", s)
+			selectedCategory = s
+		},
+	}
 
 	var closeModal = func() {
 		modalState.Set(components.AddCategoryModalProps{
@@ -101,11 +115,6 @@ func CreateModalSetup() func() {
 			if file.IsNull() || !strings.HasPrefix(file.Get("type").String(), "image/") {
 				return
 			}
-
-			// fileName := file.Get("name").String()
-			// fileSize := file.Get("size").Int()
-			// fileType := file.Get("type").String()
-			// fmt.Println(fileName, fileSize, fileType)
 
 			// Create a file  url
 			fileUrl := js.Global().Get("URL").Call("createObjectURL", file).String()
@@ -154,21 +163,45 @@ func CreateModalSetup() func() {
 			event := args[0]
 			event.Call("preventDefault")
 
-			inputElement, err := jslayer.QuerySelector(jslayer.Id(constants.IdAddCategoryDateInput))
+			categoryId, err := strconv.ParseInt(selectedCategory, 10, 64)
+			fmt.Println(err)
 			if err != nil {
 				return
 			}
 
-			value := inputElement.Get("value").String()
-			fmt.Println("Form submitted with value: ", value)
+			dateInput, err := jslayer.QuerySelector(jslayer.Id(constants.IdAddCategoryDateInput))
+			if err != nil {
+				return
+			}
 
-			date, err := time.Parse("2006-01-02", value)
+			fileInput, err := jslayer.QuerySelector(jslayer.Id(constants.IdAddCategoryFileInput))
+			if err != nil {
+				return
+			}
+			file := fileInput.Get("files").Index(0)
+			if jslayer.IsNil(file) {
+				return
+			}
+
+			// Get the date value
+			dateValue := dateInput.Get("value").String()
+			date, err := time.Parse("2006-01-02", dateValue)
 			if err != nil {
 				fmt.Println("Invalid date")
 				return
 			}
 
-			fmt.Println(date)
+			receipt, err := service.UploadRecepit(models.NewReceipt{
+				CategoryID: categoryId,
+				Date:       date.Format("2006-01-02"),
+			}, file)
+
+			if err != nil {
+				fmt.Println("Error uploading file:", err)
+				return
+			}
+
+			fmt.Println("Form submitted with data:", receipt)
 			closeModal()
 		},
 	}
@@ -181,6 +214,10 @@ func CreateModalSetup() func() {
 		},
 		OnMounted: func(value components.AddCategoryModalProps) {
 			if value.IsOpen {
+				go func() {
+					categorySelect.New()
+				}()
+
 				closeModalKeyboardEvent.Add()
 				closeAddCategoryButtonClickEvent.Add()
 				modalFocusTrapEvent.Add()
@@ -192,6 +229,7 @@ func CreateModalSetup() func() {
 				modalFocusTrapEvent.Remove()
 				closeModalKeyboardEvent.Remove()
 				closeAddCategoryButtonClickEvent.Remove()
+				categorySelect.Remove()
 			}
 		},
 	}

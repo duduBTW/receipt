@@ -25,6 +25,5 @@ func main() {
 	defer loadCallback.Release()
 
 	js.Global().Call("addEventListener", "load", loadCallback)
-
 	<-c
 }

@@ -18,6 +18,12 @@ type StateProps[T any] struct {
 	OnMounted       func(value T)
 }
 
+func NewState[T any](props StateProps[T]) StateProps[T] {
+	fmt.Println(props.Value)
+	props.Set(props.Value)
+	return props
+}
+
 func Render(component templ.Component, target string) error {
 	componentHTML := HTMLFromComponent(component)
 	return ReplaceWithHTML(target, componentHTML)

@@ -2,3 +2,4 @@ data.db
 /public/lib.wasm
 /public/output.css
 /renderer/**/*.go
+/public/uploads

@@ -1,0 +1,33 @@
+package components
+
+import (
+	"github.com/dudubtw/receipt/models"
+	"strconv"
+)
+
+type CategorySelectComponentProps struct {
+	Id         string
+	Categories []models.Category
+}
+
+const selectStyles = "flex-1 rounded-md bg-background-800 border border-gray-700 flex flex-col focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 py-3 px-2"
+const label = "Selecione uma categoria"
+
+templ CategorySelectComponent(props CategorySelectComponentProps) {
+	<div id={ props.Id } class="flex h-[56px]">
+		if len(props.Categories) == 0 {
+			<div class={ selectStyles }>{ label }</div>
+		} else {
+			@CategorySelectContent(props)
+		}
+	</div>
+}
+
+templ CategorySelectContent(props CategorySelectComponentProps) {
+	<select class={ selectStyles }>
+		<option value="">{ label }</option>
+		for _, category := range props.Categories {
+			<option value={ strconv.FormatInt(category.ID, 10) }>{ category.Name }</option>
+		}
+	</select>
+}

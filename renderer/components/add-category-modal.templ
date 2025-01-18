@@ -26,7 +26,10 @@ templ AddCategoryModalContent(props AddCategoryModalProps) {
 		<form id={ constants.IdAddCategoryForm } class="flex gap-4">
 			<img src={ props.ReceiptImageUrl } class="w-24 h-[124px] rounded object-cover"/>
 			<div class="flex flex-col gap-8 flex-1">
-				<div class="h-[124px] flex flex-col">
+				<div class="h-[124px] flex flex-col gap-3">
+					@CategorySelectComponent(CategorySelectComponentProps{
+						Id: constants.IdAddCategoryCategorySelect,
+					})
 					@Input(InputProps{
 						Id:    constants.IdAddCategoryDateInput,
 						Type:  "date",
