@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type RecepitSearchParam string
+
+type ReceiptByYear = map[int][]Receipt
+
 type Receipt struct {
 	ID         int64     `db:"id" json:"id"`
 	CategoryID int64     `db:"category_id" json:"category_id"`

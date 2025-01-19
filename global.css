@@ -25,4 +25,10 @@
     user-select: none;
     box-sizing: border-box;
   }
+
+  img {
+    user-drag: none;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+  }
 }

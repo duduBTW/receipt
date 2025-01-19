@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/dudubtw/receipt/models"
 )
@@ -13,6 +14,7 @@ type ReceiptStore interface {
 	ListReceipts(ctx context.Context) ([]models.Receipt, error)
 	UpdateReceipt(ctx context.Context, receipt *models.Receipt) error
 	DeleteReceipt(ctx context.Context, id int64) error
+	ListReceiptsByCategory(ctx context.Context, categoryID int64) ([]models.Receipt, error)
 }
 
 type SQLiteReceiptStore struct {
@@ -80,6 +82,44 @@ func (s *SQLiteReceiptStore) ListReceipts(ctx context.Context) ([]models.Receipt
 		receipts = append(receipts, receipt)
 	}
 	return receipts, rows.Err()
+}
+
+func (s *SQLiteReceiptStore) ListReceiptsByDate(ctx context.Context, categoryID int64) (models.ReceiptByYear, error) {
+	query := `SELECT id, category_id, date, image_name, created_at FROM receipts`
+	args := []interface{}{}
+
+	if categoryID != 0 {
+		query += ` WHERE category_id = ?`
+		args = append(args, categoryID)
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var gruppedReceipt = make(models.ReceiptByYear)
+	for rows.Next() {
+		var receipt models.Receipt
+		if err := rows.Scan(
+			&receipt.ID,
+			&receipt.CategoryID,
+			&receipt.Date,
+			&receipt.ImageName,
+			&receipt.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+
+		date, err := time.Parse("2006-01-02", receipt.Date)
+		if err != nil {
+			continue
+		}
+		year := date.Year()
+		gruppedReceipt[year] = append(gruppedReceipt[year], receipt)
+	}
+	return gruppedReceipt, rows.Err()
 }
 
 func (s *SQLiteReceiptStore) UpdateReceipt(ctx context.Context, receipt *models.Receipt) error {

@@ -1,5 +1,6 @@
 package constants
 
 const (
-	HomeRoute = "/"
+	HomeRoute    = "/"
+	ReceiptRoute = "/receipts"
 )

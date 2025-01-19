@@ -10,4 +10,7 @@ const (
 	IdAddCategoryDateInput      = "add-category-date-picker-input"
 	IdAddCategoryForm           = "add-category-form"
 	IdAddCategoryCategorySelect = "add-category-category-select"
+
+	// Recepits page
+	IdReceiptsSelectCategory = "recepits-select-category"
 )

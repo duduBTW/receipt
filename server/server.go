@@ -35,6 +35,29 @@ func HomeHandler() {
 	})
 }
 
+func ReceiptHandler() {
+	http.HandleFunc(constants.ReceiptRoute, func(w http.ResponseWriter, r *http.Request) {
+		categoryID := r.URL.Query().Get(constants.ReceiptSearchParamCategory)
+		categoryIDInt, _ := strconv.ParseInt(categoryID, 10, 64)
+		receiptDb := db.NewSQLiteReceiptStore(dbInstance)
+		gruppedReceipt, err := receiptDb.ListReceiptsByDate(context.Background(), categoryIDInt)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		categoriesDb := db.NewSQLiteCategoryStore(dbInstance)
+		categories, _ := categoriesDb.ListCategories(context.Background())
+
+		app := pages.App(pages.ReceiptsPage(pages.ReceiptsPageProps{
+			GruppedReceipt:          gruppedReceipt,
+			Categories:              categories,
+			DefaultCategorySelected: categoryIDInt,
+		}))
+		app.Render(r.Context(), w)
+	})
+}
+
 func CategoriesAPIHandler() {
 	http.HandleFunc(constants.ApiCategories, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -143,9 +166,10 @@ func main() {
 	HomeHandler()
 	UploadHandler()
 	CategoriesAPIHandler()
+	ReceiptHandler()
 
 	fmt.Println("Server is running on port ", port)
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("listen: %s\n", err)
+		log.Fatalf("Error starting the server: %s\n", err)
 	}
 }

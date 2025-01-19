@@ -6,15 +6,16 @@ import (
 )
 
 type CategorySelectComponentProps struct {
-	Id         string
-	Categories []models.Category
+	Id              string
+	Categories      []models.Category
+	DefaultSelected int64
 }
 
-const selectStyles = "flex-1 rounded-md bg-background-800 border border-gray-700 flex flex-col focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 py-3 px-2"
+const selectStyles = "flex-1 rounded-md bg-background-800 border border-gray-700 flex flex-col justify-center focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 py-3 px-3 leading-none"
 const label = "Selecione uma categoria"
 
 templ CategorySelectComponent(props CategorySelectComponentProps) {
-	<div id={ props.Id } class="flex h-[56px]">
+	<div id={ props.Id } class="flex h-[52px]">
 		if len(props.Categories) == 0 {
 			<div class={ selectStyles }>{ label }</div>
 		} else {
@@ -27,7 +28,8 @@ templ CategorySelectContent(props CategorySelectComponentProps) {
 	<select class={ selectStyles }>
 		<option value="">{ label }</option>
 		for _, category := range props.Categories {
-			<option value={ strconv.FormatInt(category.ID, 10) }>{ category.Name }</option>
+			{{ isSelected := props.DefaultSelected == category.ID }}
+			<option selected?={ isSelected } value={ strconv.FormatInt(category.ID, 10) }>{ category.Name }</option>
 		}
 	</select>
 }

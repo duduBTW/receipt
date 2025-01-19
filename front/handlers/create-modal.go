@@ -191,7 +191,7 @@ func CreateModalSetup() func() {
 				return
 			}
 
-			receipt, err := service.UploadRecepit(models.NewReceipt{
+			_, err = service.UploadRecepit(models.NewReceipt{
 				CategoryID: categoryId,
 				Date:       date.Format("2006-01-02"),
 			}, file)
@@ -201,8 +201,7 @@ func CreateModalSetup() func() {
 				return
 			}
 
-			fmt.Println("Form submitted with data:", receipt)
-			closeModal()
+			jslayer.Redirect(constants.ReceiptRoute, constants.ReceiptSearchParamCategory, selectedCategory)
 		},
 	}
 
