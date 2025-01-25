@@ -47,6 +47,16 @@ func ReceiptsSetup() func() {
 		return service.UpdateRecepit(selectedRecepit.CopyNew(nr))
 	})
 
+	recepitImageClickHandler := jslayer.EventListener{
+		Selector:  jslayer.Id(constants.IdReceiptCardImage),
+		EventType: "click",
+		Listener: func(this js.Value, args []js.Value) {
+			event := args[0]
+			jslayer.StopPropagation(event)
+			Global.OpenImage(this.Call("getAttribute", "src").String())
+		},
+	}
+
 	recepitClickHandler := jslayer.EventListener{
 		Selector:  jslayer.Id(constants.IdReceiptCard),
 		EventType: "click",
@@ -74,8 +84,10 @@ func ReceiptsSetup() func() {
 	}
 
 	recepitClickHandler.Add()
+	recepitImageClickHandler.Add()
 	categorySelect.New()
 	return func() {
+		recepitImageClickHandler.Remove()
 		recepitClickHandler.Remove()
 		categorySelect.Remove()
 	}

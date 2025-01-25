@@ -14,6 +14,10 @@ import (
 func main() {
 	c := make(chan struct{}, 0)
 
+	// Global
+	jslayer.RegisterFunction(constants.JsFunctionsImageModal, handlers.ImageModalSetup)
+
+	// Page specific stuff
 	jslayer.RegisterFunction(constants.JsFunctionsCreateCategory, handlers.CreateModalSetup)
 	jslayer.RegisterFunction(constants.JsFunctionsReceipts, handlers.ReceiptsSetup)
 	jslayer.RegisterFunction(constants.JsFunctionsHome, handlers.HomeSetup)

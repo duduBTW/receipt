@@ -1,0 +1,35 @@
+package components
+
+import "github.com/dudubtw/receipt/constants"
+
+type ImageModalProps struct {
+	IsOpen   bool
+	ImageUrl string
+}
+
+var DefaultImageModalProps = ImageModalProps{IsOpen: false}
+
+templ DefaultImageModal() {
+	@ImageModal(DefaultImageModalProps)
+}
+
+templ ImageModal(props ImageModalProps) {
+	<div id={ constants.IdImageModal }>
+		if props.IsOpen {
+			@ImageModalContent(props.ImageUrl)
+		}
+	</div>
+}
+
+templ ImageModalContent(imageUrl string) {
+	<div class="fixed top-0 left-0 w-full h-full flex bg-black/40 backdrop-blur items-center justify-center">
+		<img
+			class="max-w-full max-h-full"
+			src={ imageUrl }
+			alt=""
+		/>
+	</div>
+	<button id={ constants.IdImageModalCloseButton } class="fixed top-5 left-5">
+		<i data-lucide="x"></i>
+	</button>
+}

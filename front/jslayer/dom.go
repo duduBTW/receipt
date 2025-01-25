@@ -69,7 +69,6 @@ func Id(id string) string {
 }
 
 func GetStringAttr(selector string, attr string) (string, error) {
-
 	element := js.Global().Get("document").Call("querySelector", selector)
 	if IsNil(element) {
 		return "", errors.New("Element not found")
@@ -149,6 +148,18 @@ func AppendHTMLInside(selector string, component templ.Component) error {
 	return nil
 }
 
+func PrependHTMLInside(selector string, component templ.Component) error {
+	element := js.Global().Get("document").Call("querySelector", selector)
+	if IsNil(element) {
+		return errors.New("Element not found")
+	}
+	html := HTMLFromComponent(component)
+	fragment := js.Global().Get("document").Call("createRange").Call("createContextualFragment", html)
+	firstChild := element.Get("firstChild")
+	element.Call("insertBefore", fragment, firstChild)
+	return nil
+}
+
 // https://developer.mozilla.org/pt-BR/docs/Web/API/Element/setAttribute
 func SetAttr(element js.Value, name, value string) {
 	element.Call("setAttribute", name, value)
@@ -188,6 +199,10 @@ func Focus(selector string) error {
 
 func Click(element js.Value) {
 	element.Call("click")
+}
+
+func StopPropagation(element js.Value) {
+	element.Call("stopPropagation")
 }
 
 type JSON struct {

@@ -1,6 +1,9 @@
 package pages
 
-import "github.com/dudubtw/receipt/constants"
+import (
+	"github.com/dudubtw/receipt/constants"
+	"github.com/dudubtw/receipt/renderer/components"
+)
 
 templ App(body templ.Component) {
 	<html>
@@ -27,6 +30,9 @@ templ App(body templ.Component) {
 					<i data-lucide="house"></i>
 				</a>
 				@body
+				<div id={ constants.IdGloabal }>
+					@components.DefaultImageModal()
+				</div>
 			</div>
 			<script src="https://unpkg.com/lucide@latest"></script>
 			<script>

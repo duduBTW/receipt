@@ -2,6 +2,7 @@ package constants
 
 const (
 	IdRoot                      = "root"
+	IdGloabal                   = "global"
 	IdCreateCategoryContainer   = "create-category-container"
 	IdAddCategoryModal          = "add-category-modal"
 	IdAddCategoryButton         = "add-category-button"
@@ -18,4 +19,9 @@ const (
 	// Recepits page
 	IdReceiptsSelectCategory = "recepits-select-category"
 	IdReceiptCard            = "recepit-card"
+	IdReceiptCardImage       = "recepit-card-image"
+
+	// Image modal
+	IdImageModal            = "image-modal"
+	IdImageModalCloseButton = "image-modal-close"
 )

@@ -1,6 +1,18 @@
 package components
 
-script StartScript(functionNames ...string) {
+import "github.com/dudubtw/receipt/constants"
+
+func functionNamesWithDefault(functionNames []string) []string {
+	var defaultFunctionNames = []string{constants.JsFunctionsImageModal}
+	defaultFunctionNames = append(defaultFunctionNames, functionNames...)
+	return defaultFunctionNames
+}
+
+templ StartScript(functionNames ...string) {
+	@StartScriptImpl(functionNamesWithDefault(functionNames))
+}
+
+script StartScriptImpl(functionNames []string) {
   window.start = function() {
     functionNames.forEach(functionName => {
       window[functionName]()

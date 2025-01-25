@@ -27,7 +27,7 @@ func setDefaultDate() {
 }
 
 func AppendAddCategoryComponent() {
-	err := jslayer.AppendHTMLInside(jslayer.Id(constants.IdRoot), components.AddCategory())
+	err := jslayer.PrependHTMLInside(jslayer.Id(constants.IdGloabal), components.AddCategory())
 	if err != nil {
 		fmt.Println(err)
 	}
