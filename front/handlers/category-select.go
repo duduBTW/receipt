@@ -19,6 +19,7 @@ type CategorySelect struct {
 	OnValueChange func(string)
 	DefaultValue  string
 	changeEvent   jslayer.EventListener
+	OnMounted     func()
 }
 
 func (cSelect *CategorySelect) fetch() {
@@ -66,6 +67,10 @@ func (cSelect *CategorySelect) New() {
 		RenderComponent: components.CategorySelectComponent,
 		OnMounted: func(value components.CategorySelectComponentProps) {
 			jslayer.CreateIcons()
+
+			if cSelect.OnMounted != nil {
+				cSelect.OnMounted()
+			}
 		},
 	})
 

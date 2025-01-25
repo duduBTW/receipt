@@ -25,14 +25,19 @@ func GetQueryParam(queryParamName string) string {
 	return currentUrl.Query().Get(queryParamName)
 }
 
-func SetQueryParam(queryParamName, queryParamValue string) {
+func SetQueryParam(queryParams [][2]string) {
+
 	currentUrl, err := url.Parse(getCurrentUrl())
 	if err != nil {
 		return
 	}
 
 	query := currentUrl.Query()
-	query.Set(queryParamName, queryParamValue)
+	for _, queryParam := range queryParams {
+		queryParamName := queryParam[0]
+		queryParamValue := queryParam[1]
+		query.Set(queryParamName, queryParamValue)
+	}
 	currentUrl.RawQuery = query.Encode()
 	navigate(currentUrl.String())
 }

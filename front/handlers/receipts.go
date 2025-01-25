@@ -13,6 +13,16 @@ import (
 	"github.com/dudubtw/receipt/models"
 )
 
+func FocusSelectOnOpen() {
+	var wasRedirectedFromCategorySelect = jslayer.GetQueryParam(constants.QueryParamReceiptFromCategorySelect)
+	fmt.Println(wasRedirectedFromCategorySelect)
+	if wasRedirectedFromCategorySelect != constants.QueryParamReceiptFromCategorySelectTrueValue {
+		return
+	}
+
+	jslayer.Focus(jslayer.Id(constants.IdReceiptsSelectCategory + " select"))
+}
+
 func ReceiptsSetup() func() {
 	var isLoading = false
 	var selectedRecepit models.Receipt
@@ -20,8 +30,17 @@ func ReceiptsSetup() func() {
 		Id:           constants.IdReceiptsSelectCategory,
 		DefaultValue: jslayer.GetQueryParam(constants.ReceiptSearchParamCategory),
 		OnValueChange: func(category string) {
-			jslayer.SetQueryParam(constants.ReceiptSearchParamCategory, category)
+			jslayer.SetQueryParam([][2]string{
+				{
+					constants.ReceiptSearchParamCategory, category,
+				},
+				{
+					constants.QueryParamReceiptFromCategorySelect,
+					constants.QueryParamReceiptFromCategorySelectTrueValue,
+				},
+			})
 		},
+		OnMounted: FocusSelectOnOpen,
 	}
 
 	var modal = ReceiptModal(func(nr models.NewReceipt, v js.Value) (models.Receipt, error) {

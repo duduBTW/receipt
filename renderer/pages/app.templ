@@ -23,6 +23,9 @@ templ App(body templ.Component) {
 		</head>
 		<body>
 			<div id={ constants.IdRoot }>
+				<a href={ constants.HomeRoute } class="fixed top-5 left-5">
+					<i data-lucide="house"></i>
+				</a>
 				@body
 			</div>
 			<script src="https://unpkg.com/lucide@latest"></script>

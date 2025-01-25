@@ -9,5 +9,7 @@ const (
 )
 
 const (
-	ReceiptSearchParamCategory = "recepit-category"
+	ReceiptSearchParamCategory                   = "recepit-category"
+	QueryParamReceiptFromCategorySelect          = "recepit-from-category-select"
+	QueryParamReceiptFromCategorySelectTrueValue = "true"
 )
