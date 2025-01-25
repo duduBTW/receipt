@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/dudubtw/receipt/constants"
 	"github.com/dudubtw/receipt/db"
@@ -68,6 +69,50 @@ func CategoriesAPIHandler() {
 			return
 		}
 		json.NewEncoder(w).Encode(categories)
+	})
+}
+
+func ReceiptsAPIHandler() {
+	http.HandleFunc(constants.ApiRecepipts, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		receiptsDb := db.NewSQLiteReceiptStore(dbInstance)
+		receipts, err := receiptsDb.ListReceipts(context.Background())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		json.NewEncoder(w).Encode(receipts)
+	})
+}
+
+func SingleReceiptAPIHandler() {
+	http.HandleFunc(constants.ApiRecepipt, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Extract ID from URL path
+		id := strings.TrimPrefix(r.URL.Path, constants.ApiRecepipt)
+		receiptID, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid receipt ID", http.StatusBadRequest)
+			return
+		}
+
+		receiptsDb := db.NewSQLiteReceiptStore(dbInstance)
+		receipt, err := receiptsDb.GetReceipt(context.Background(), receiptID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if receipt == nil {
+			http.Error(w, "Receipt not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(receipt)
 	})
 }
 
@@ -145,6 +190,30 @@ func UploadHandler() {
 	})
 }
 
+func UpdateHandler() {
+	http.HandleFunc(constants.ApiUpdateReceipt, func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var receipt models.Receipt
+		err := json.NewDecoder(r.Body).Decode(&receipt)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = db.NewSQLiteReceiptStore(dbInstance).UpdateReceipt(context.Background(), &receipt)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(receipt)
+	})
+}
+
 func InitDb() {
 	var err error
 	dbInstance, err = db.InitDB("./data.db")
@@ -167,6 +236,9 @@ func main() {
 	UploadHandler()
 	CategoriesAPIHandler()
 	ReceiptHandler()
+	ReceiptsAPIHandler()
+	SingleReceiptAPIHandler()
+	UpdateHandler()
 
 	fmt.Println("Server is running on port ", port)
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {

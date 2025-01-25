@@ -64,6 +64,9 @@ func (cSelect *CategorySelect) New() {
 			Categories: cSelect.categories,
 		},
 		RenderComponent: components.CategorySelectComponent,
+		OnMounted: func(value components.CategorySelectComponentProps) {
+			jslayer.CreateIcons()
+		},
 	})
 
 	// Listen to event listeners
@@ -71,6 +74,7 @@ func (cSelect *CategorySelect) New() {
 
 	// Set default value
 	cSelect.Set(cSelect.DefaultValue)
+
 }
 
 func (cSelect *CategorySelect) Remove() {

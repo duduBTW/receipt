@@ -17,6 +17,12 @@ type Receipt struct {
 	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 }
 
+func (receipt Receipt) CopyNew(new NewReceipt) Receipt {
+	receipt.CategoryID = new.CategoryID
+	receipt.Date = new.Date
+	return receipt
+}
+
 type NewReceiptFormFields struct {
 	CategoryID string
 	Date       string

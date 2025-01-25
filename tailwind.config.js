@@ -8,11 +8,12 @@ module.exports = {
           900: "hsl(var(--background-900))",
           800: "hsl(var(--background-800))",
           700: "hsl(var(--background-700))",
+          600: "hsl(var(--background-600))",
         },
       },
       container: {
         screens: {
-          DEFAULT: "620px",
+          DEFAULT: "672px",
         },
       },
       borderRadius: {

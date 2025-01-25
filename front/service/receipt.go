@@ -4,9 +4,11 @@
 package service
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"syscall/js"
 
 	"github.com/dudubtw/receipt/constants"
@@ -64,6 +66,63 @@ func UploadRecepit(receipt models.NewReceipt, file js.Value) (models.Receipt, er
 		})
 
 		promise.Call("then", then).Call("catch", catch)
+	}()
+
+	result := <-ch
+	return result.receipt, result.err
+}
+
+type FetchReceiptChan struct {
+	receipt models.Receipt
+	err     error
+}
+
+func FetchReceipt(id string) (models.Receipt, error) {
+	ch := make(chan FetchReceiptChan)
+
+	go func() {
+		response, err := http.Get(constants.ApiRecepipt + id)
+		if err != nil {
+			ch <- FetchReceiptChan{models.Receipt{}, err}
+		}
+		defer response.Body.Close()
+
+		var recepit models.Receipt
+		if err := json.NewDecoder(response.Body).Decode(&recepit); err != nil {
+			ch <- FetchReceiptChan{models.Receipt{}, err}
+			return
+		}
+		ch <- FetchReceiptChan{recepit, nil}
+	}()
+
+	result := <-ch
+	return result.receipt, result.err
+}
+
+func UpdateRecepit(receipt models.Receipt) (models.Receipt, error) {
+	ch := make(chan FetchReceiptChan)
+	go func() {
+		body, err := json.Marshal(receipt)
+		if err != nil {
+			ch <- FetchReceiptChan{models.Receipt{}, err}
+			return
+		}
+
+		fmt.Println("body", string(body))
+
+		response, err := http.Post(constants.ApiUpdateReceipt, "application/json", bytes.NewBuffer(body))
+		if err != nil {
+			ch <- FetchReceiptChan{models.Receipt{}, err}
+			return
+		}
+		defer response.Body.Close()
+
+		var recepit models.Receipt
+		if err := json.NewDecoder(response.Body).Decode(&recepit); err != nil {
+			ch <- FetchReceiptChan{models.Receipt{}, err}
+			return
+		}
+		ch <- FetchReceiptChan{recepit, nil}
 	}()
 
 	result := <-ch

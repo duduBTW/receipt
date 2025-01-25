@@ -1,16 +1,19 @@
 package components
 
-import "github.com/dudubtw/receipt/constants"
+import (
+	"github.com/dudubtw/receipt/constants"
+	"github.com/dudubtw/receipt/models"
+)
 
 type AddCategoryModalProps struct {
-	IsOpen          bool
-	ReceiptImageUrl string
+	IsOpen  bool
+	Recepit models.Receipt
 }
 
 templ AddCategoryModal(props AddCategoryModalProps) {
 	<div id={ constants.IdAddCategoryModal }>
 		if props.IsOpen {
-			<div class="fixed inset-0 w-full h-full bg-black/40 backdrop-blur flex items-center justify-center">
+			<div aria-modal="true" role="dialog" aria-labelledby={ constants.IdAddCategoryModalTitle } class="fixed inset-0 w-full h-full bg-black/40 backdrop-blur flex items-center justify-center">
 				@AddCategoryModalContent(props)
 			</div>
 		}
@@ -18,13 +21,13 @@ templ AddCategoryModal(props AddCategoryModalProps) {
 }
 
 templ AddCategoryModalContent(props AddCategoryModalProps) {
-	<div class="bg-background-700 rounded-lg relative px-12 pt-8 pb-4 flex flex-col gap-8 w-full max-w-[440px]">
+	<div class="bg-background-700 rounded-lg relative px-12 pt-8 pb-4 flex flex-col gap-8 w-full max-w-[460px]">
 		<button id={ constants.IdAddCategoryCloseButton } class="text-gray-50 absolute top-3 right-3" aria-label="Fechar modal">
 			<i data-lucide="x" class="text-red-500"></i>
 		</button>
-		<h2 class="font-bold">Adicionar comprovante</h2>
+		<h2 id={ constants.IdAddCategoryModalTitle } class="font-bold">Adicionar comprovante</h2>
 		<form id={ constants.IdAddCategoryForm } class="flex gap-4">
-			<img src={ props.ReceiptImageUrl } class="w-24 h-[124px] rounded object-cover"/>
+			<img src={ props.Recepit.ImageName } class="w-24 h-[124px] rounded object-cover"/>
 			<div class="flex flex-col gap-8 flex-1">
 				<div class="h-[124px] flex flex-col gap-3">
 					@CategorySelectComponent(CategorySelectComponentProps{

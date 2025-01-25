@@ -11,7 +11,7 @@ type CategorySelectComponentProps struct {
 	DefaultSelected int64
 }
 
-const selectStyles = "flex-1 rounded-md bg-background-800 border border-gray-700 flex flex-col justify-center focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 py-3 px-3 leading-none"
+const selectStyles = "reset flex-1 rounded-md bg-background-800 border border-gray-700 flex flex-col justify-center focus:outline-none focus-within:ring-offset-2 py-3 pl-3 pr-8 focus-within:ring focus-within:ring-purple-500"
 const label = "Selecione uma categoria"
 
 templ CategorySelectComponent(props CategorySelectComponentProps) {
@@ -25,11 +25,14 @@ templ CategorySelectComponent(props CategorySelectComponentProps) {
 }
 
 templ CategorySelectContent(props CategorySelectComponentProps) {
-	<select class={ selectStyles }>
-		<option value="">{ label }</option>
-		for _, category := range props.Categories {
-			{{ isSelected := props.DefaultSelected == category.ID }}
-			<option selected?={ isSelected } value={ strconv.FormatInt(category.ID, 10) }>{ category.Name }</option>
-		}
-	</select>
+	<div class="relative flex max-w-[340px] w-full">
+		<select class={ selectStyles }>
+			<option value="">{ label }</option>
+			for _, category := range props.Categories {
+				{{ isSelected := props.DefaultSelected == category.ID }}
+				<option selected?={ isSelected } value={ strconv.FormatInt(category.ID, 10) }>{ category.Name }</option>
+			}
+		</select>
+		<i data-lucide="chevron-down" class="absolute top-1/2 right-3 transform -translate-y-1/2"></i>
+	</div>
 }

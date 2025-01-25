@@ -177,6 +177,19 @@ func IsFocused(element js.Value) bool {
 	return activeElement.Equal(element)
 }
 
+func Focus(selector string) error {
+	element, err := QuerySelector(selector)
+	if err != nil {
+		return err
+	}
+	element.Call("focus")
+	return nil
+}
+
+func Click(element js.Value) {
+	element.Call("click")
+}
+
 type JSON struct {
 	Value js.Value
 }

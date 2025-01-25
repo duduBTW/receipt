@@ -12,7 +12,7 @@ type InputProps struct {
 }
 
 func getInputClasses(props InputProps) string {
-	baseClasses := "px-[10px] pb-2 bg-transparent text-gray-50 transition-colors  disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none"
+	baseClasses := "px-[10px] pb-2 bg-transparent text-gray-50 transition-colors  disabled:pointer-events-none disabled:opacity-50 focus:outline-none"
 
 	if props.Class != "" {
 		return strings.Join([]string{baseClasses, props.Class}, " ")
@@ -21,7 +21,7 @@ func getInputClasses(props InputProps) string {
 }
 
 templ Input(props InputProps) {
-	<div class="rounded-md bg-background-800 border border-gray-700 flex flex-col focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+	<div class="rounded-md bg-background-800 border border-gray-700 flex flex-col focus:outline-none focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring focus-within:ring-purple-500">
 		if props.Label != "" {
 			<label for={ props.Id } class="text-xs text-gray-400 font-bold px-[10px] pt-2">{ props.Label }</label>
 		}

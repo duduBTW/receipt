@@ -5,6 +5,7 @@ import (
 	"github.com/dudubtw/receipt/constants"
 	"github.com/dudubtw/receipt/models"
 	"github.com/dudubtw/receipt/renderer/components"
+	"strconv"
 )
 
 type HomeProps struct {
@@ -18,7 +19,7 @@ templ Home(props HomeProps) {
 			Categories: props.Categories,
 		})
 	</div>
-	@components.StartScript(constants.JsFunctionsCreateCategory)
+	@components.StartScript(constants.JsFunctionsCreateCategory, constants.JsFunctionsHome)
 }
 
 templ Tabs() {
@@ -63,11 +64,12 @@ css categoryColor(category models.Category, Lightness int) {
 }
 
 templ CategoryCard(category models.Category) {
-	<div class={ categoryBackground(category, 10), "px-[10px] py-2 rounded flex items-center gap-[10px] bg-[var(--category-bg)] hover:bg-[var(--category-bg-hover)] transition-colors", }>
+	{{ href := constants.ReceiptRoute + "?" + constants.ReceiptSearchParamCategory + "=" + strconv.FormatInt(category.ID, 10) }}
+	<div id={ constants.IdCategoryCard } class={ categoryBackground(category, 10), "px-[10px] py-2 rounded flex items-center gap-[10px] bg-[var(--category-bg)] hover:bg-[var(--category-bg-hover)] transition-colors", }>
 		<div class="bg-background-900 w-10 h-10 rounded-full flex items-center justify-center">
 			<i data-lucide={ category.LucideIconName } class={ categoryColor(category, 40) }></i>
 		</div>
-		<a class="font-semibold">
+		<a href={ templ.URL(href) } class="font-semibold">
 			{ category.Name }
 		</a>
 	</div>

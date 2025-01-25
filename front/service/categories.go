@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dudubtw/receipt/constants"
 	"github.com/dudubtw/receipt/models"
 )
 
@@ -14,7 +15,7 @@ func FetchCategories() ([]models.Category, error) {
 	})
 
 	go func() {
-		resp, err := http.Get("/api/categories")
+		resp, err := http.Get(constants.ApiCategories)
 		if err != nil {
 			ch <- struct {
 				categories []models.Category

@@ -16,6 +16,7 @@ func main() {
 
 	jslayer.RegisterFunction(constants.JsFunctionsCreateCategory, handlers.CreateModalSetup)
 	jslayer.RegisterFunction(constants.JsFunctionsReceipts, handlers.ReceiptsSetup)
+	jslayer.RegisterFunction(constants.JsFunctionsHome, handlers.HomeSetup)
 
 	loadCallback := js.FuncOf(func(this js.Value, args []js.Value) any {
 		if !jslayer.IsNil(js.Global().Get("start")) {
