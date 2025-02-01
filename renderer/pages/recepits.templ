@@ -42,7 +42,7 @@ type ReceiptCardProps struct {
 templ ReceiptCard(props ReceiptCardProps) {
 	{{ date, _ := time.Parse("2006-01-02", props.Receipt.Date) }}
 	<div { templ.Attributes{ constants.DataRecepitId: strconv.FormatInt(props.Receipt.ID, 10)}... } id={ constants.IdReceiptCard } class="flex flex-col gap-3 p-3 rounded-lg bg-background-700 hover:bg-background-600 focus-within:bg-background-600 transition-colors focus-within:ring focus-within:ring-purple-500">
-		<img id={ constants.IdReceiptCardImage } class="w-full h-[190px] min-h-[190px] max-h-[190px] object-cover rounded" src={ props.Receipt.ImageName }/>
+		<img tabindex="0" id={ constants.IdReceiptCardImage } class="w-full h-[190px] min-h-[190px] max-h-[190px] object-cover rounded" src={ props.Receipt.ImageName }/>
 		<button type="button" class="font-medium leading-none focus:outline-none">{ date.Format("02/01/2006") }</button>
 	</div>
 }

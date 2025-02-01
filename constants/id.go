@@ -12,9 +12,11 @@ const (
 	IdAddCategoryDateInput      = "add-category-date-picker-input"
 	IdAddCategoryForm           = "add-category-form"
 	IdAddCategoryCategorySelect = "add-category-category-select"
+	IdReceiptDropZone           = "receipt-drop-zone"
 
 	// Home
 	IdCategoryCard = "category-card"
+	IdHomeTabs     = "home-tabs"
 
 	// Recepits page
 	IdReceiptsSelectCategory = "recepits-select-category"
@@ -24,4 +26,7 @@ const (
 	// Image modal
 	IdImageModal            = "image-modal"
 	IdImageModalCloseButton = "image-modal-close"
+
+	// Tabs
+	IdTabItem = "tab-item"
 )

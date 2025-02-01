@@ -58,12 +58,20 @@ func modalFocusTrapFactory() jslayer.EventListener {
 	}
 }
 
+type ReceiptModalParams struct {
+	DefaultProps components.AddCategoryModalProps
+	OnSubmit     func(models.NewReceipt) (models.Receipt, error)
+	OnClose      func()
+	OnOpen       func()
+}
+
 type ReceiptModalActions struct {
 	Open  func(recepit models.Receipt)
 	Close func()
 }
 
-func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, error)) ReceiptModalActions {
+func ReceiptModal(params ReceiptModalParams) ReceiptModalActions {
+	var defaultProps = params.DefaultProps
 	var modalState jslayer.StateProps[components.AddCategoryModalProps]
 	var modalFocusTrapEvent = modalFocusTrapFactory()
 	var selectedCategory = ""
@@ -80,13 +88,23 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 		modalState.Set(components.AddCategoryModalProps{
 			IsOpen: false,
 		})
+
+		if params.OnClose != nil {
+			params.OnClose()
+		}
 	}
 
 	var openModal = func(recepit models.Receipt) {
 		modalState.Set(components.AddCategoryModalProps{
-			IsOpen:  true,
-			Recepit: recepit,
+			IsOpen:      true,
+			Recepit:     recepit,
+			Title:       defaultProps.Title,
+			ButtonLabel: defaultProps.ButtonLabel,
 		})
+
+		if params.OnOpen != nil {
+			params.OnOpen()
+		}
 	}
 
 	var closeAddCategoryButtonClickEvent = jslayer.EventListener{
@@ -114,7 +132,10 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 		Selector:  jslayer.Id(constants.IdAddCategoryForm),
 		EventType: "submit",
 		Listener: func(this js.Value, args []js.Value) {
-			fmt.Println("selectedCategory", selectedCategory)
+			if params.OnSubmit == nil {
+				return
+			}
+
 			event := args[0]
 			event.Call("preventDefault")
 
@@ -131,13 +152,6 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 				return
 			}
 
-			fileInput, err := jslayer.QuerySelector(jslayer.Id(constants.IdAddCategoryFileInput))
-			if err != nil {
-				fmt.Println("2")
-				fmt.Println(err)
-				return
-			}
-
 			// Get the date value
 			dateValue := dateInput.Get("value").String()
 			date, err := time.Parse("2006-01-02", dateValue)
@@ -146,10 +160,10 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 				return
 			}
 
-			_, err = onSubmit(models.NewReceipt{
+			_, err = params.OnSubmit(models.NewReceipt{
 				CategoryID: categoryId,
 				Date:       date.Format("2006-01-02"),
-			}, fileInput.Get("files").Index(0))
+			})
 
 			if err != nil {
 				fmt.Println("Failed to submit modal", err)
@@ -161,7 +175,7 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 	}
 
 	modalState = jslayer.StateProps[components.AddCategoryModalProps]{
-		Value:  components.AddCategoryModalDefaultProps,
+		Value:  defaultProps,
 		Target: jslayer.Id(constants.IdAddCategoryModal),
 		RenderComponent: func(props components.AddCategoryModalProps) templ.Component {
 			return components.AddCategoryModal(props)
@@ -170,7 +184,8 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 			if value.IsOpen {
 				go func() {
 					categorySelect.New()
-					categorySelect.Set(strconv.FormatInt(value.Recepit.CategoryID, 10))
+					newSelectedCategory := strconv.FormatInt(value.Recepit.CategoryID, 10)
+					categorySelect.Set(newSelectedCategory)
 				}()
 
 				dateInput, err := jslayer.QuerySelector(jslayer.Id(constants.IdAddCategoryDateInput))
@@ -185,12 +200,14 @@ func ReceiptModal(onSubmit func(models.NewReceipt, js.Value) (models.Receipt, er
 				jslayer.CreateIcons()
 				setDefaultDate()
 				jslayer.Focus(jslayer.Id(constants.IdAddCategoryCloseButton))
+
 			} else {
 				formSubmitHandler.Remove()
 				modalFocusTrapEvent.Remove()
 				closeModalKeyboardEvent.Remove()
 				closeAddCategoryButtonClickEvent.Remove()
 				categorySelect.Remove()
+
 			}
 		},
 	}

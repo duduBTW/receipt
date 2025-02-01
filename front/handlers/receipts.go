@@ -11,6 +11,7 @@ import (
 	"github.com/dudubtw/receipt/front/jslayer"
 	"github.com/dudubtw/receipt/front/service"
 	"github.com/dudubtw/receipt/models"
+	"github.com/dudubtw/receipt/renderer/components"
 )
 
 func FocusSelectOnOpen() {
@@ -43,9 +44,20 @@ func ReceiptsSetup() func() {
 		OnMounted: FocusSelectOnOpen,
 	}
 
-	var modal = ReceiptModal(func(nr models.NewReceipt, v js.Value) (models.Receipt, error) {
-		return service.UpdateRecepit(selectedRecepit.CopyNew(nr))
+	var modal = ReceiptModal(ReceiptModalParams{
+		DefaultProps: components.AddCategoryModalProps{
+			IsOpen:      false,
+			Title:       "Editar comprovante",
+			ButtonLabel: "Salvar",
+		},
+		OnSubmit: func(nr models.NewReceipt) (models.Receipt, error) {
+			return service.UpdateRecepit(selectedRecepit.CopyNew(nr))
+		},
 	})
+
+	var openReceiptImage = func(element js.Value) {
+		Global.OpenImage(element.Call("getAttribute", "src").String())
+	}
 
 	recepitImageClickHandler := jslayer.EventListener{
 		Selector:  jslayer.Id(constants.IdReceiptCardImage),
@@ -53,7 +65,21 @@ func ReceiptsSetup() func() {
 		Listener: func(this js.Value, args []js.Value) {
 			event := args[0]
 			jslayer.StopPropagation(event)
-			Global.OpenImage(this.Call("getAttribute", "src").String())
+			openReceiptImage(this)
+		},
+	}
+
+	recepitImageKeyDownHandler := jslayer.EventListener{
+		Selector:  jslayer.Id(constants.IdReceiptCardImage),
+		EventType: "keydown",
+		Listener: func(this js.Value, args []js.Value) {
+			event := args[0]
+			key := event.Get("key").String()
+
+			if key == "Enter" {
+				openReceiptImage(this)
+
+			}
 		},
 	}
 
@@ -86,7 +112,9 @@ func ReceiptsSetup() func() {
 	recepitClickHandler.Add()
 	recepitImageClickHandler.Add()
 	categorySelect.New()
+	recepitImageKeyDownHandler.Add()
 	return func() {
+		recepitImageKeyDownHandler.Remove()
 		recepitImageClickHandler.Remove()
 		recepitClickHandler.Remove()
 		categorySelect.Remove()

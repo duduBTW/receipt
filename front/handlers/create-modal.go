@@ -35,8 +35,41 @@ func AppendAddCategoryComponent() {
 }
 
 func CreateModalSetup() func() {
-	var modal = ReceiptModal(func(receipt models.NewReceipt, file js.Value) (models.Receipt, error) {
-		return service.UploadRecepit(receipt, file)
+	var modal ReceiptModalActions
+	var selectedFile js.Value
+	var selectFile = func(file js.Value) {
+		if file.IsNull() || !strings.HasPrefix(file.Get("type").String(), "image/") {
+			return
+		}
+
+		selectedFile = file
+		fileUrl := js.Global().Get("URL").Call("createObjectURL", file).String()
+		modal.Open(models.Receipt{
+			ImageName: fileUrl,
+			CategoryID: func() int64 {
+				idStr := jslayer.GetQueryParam(constants.ReceiptSearchParamCategory)
+				id, err := strconv.ParseInt(idStr, 10, 64)
+				if err != nil {
+					return 0
+				}
+				return id
+			}(),
+		})
+	}
+
+	var dropZoneEvents = ReceiptDropZone(ReceiptDropZoneHooks{
+		OnDrop: selectFile,
+	})
+
+	modal = ReceiptModal(ReceiptModalParams{
+		DefaultProps: components.AddCategoryModalProps{
+			IsOpen:      false,
+			Title:       "Adicionar comprovante",
+			ButtonLabel: "Adicionar",
+		},
+		OnSubmit: func(receipt models.NewReceipt) (models.Receipt, error) {
+			return service.UploadRecepit(receipt, selectedFile)
+		},
 	})
 
 	var fileChangeHandler = jslayer.EventListener{
@@ -45,24 +78,7 @@ func CreateModalSetup() func() {
 		Listener: func(this js.Value, args []js.Value) {
 			fileInput := this
 			file := fileInput.Get("files").Index(0)
-
-			if file.IsNull() || !strings.HasPrefix(file.Get("type").String(), "image/") {
-				return
-			}
-
-			// Create a file  url
-			fileUrl := js.Global().Get("URL").Call("createObjectURL", file).String()
-			modal.Open(models.Receipt{
-				ImageName: fileUrl,
-				CategoryID: func() int64 {
-					idStr := jslayer.GetQueryParam(constants.ReceiptSearchParamCategory)
-					id, err := strconv.ParseInt(idStr, 10, 64)
-					if err != nil {
-						return 0
-					}
-					return id
-				}(),
-			})
+			selectFile(file)
 		},
 	}
 
@@ -81,7 +97,11 @@ func CreateModalSetup() func() {
 
 	AppendAddCategoryComponent()
 
-	var eventList = []jslayer.EventListener{addCategoryButtonClickEvent, fileChangeHandler}
+	var eventList = append(
+		[]jslayer.EventListener{addCategoryButtonClickEvent, fileChangeHandler},
+		dropZoneEvents...,
+	)
+
 	jslayer.AddEvents(eventList)
 	return func() {
 		jslayer.RemoveEvents(eventList)

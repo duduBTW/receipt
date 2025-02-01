@@ -6,8 +6,10 @@ import (
 )
 
 type AddCategoryModalProps struct {
-	IsOpen  bool
-	Recepit models.Receipt
+	IsOpen      bool
+	Recepit     models.Receipt
+	Title       string
+	ButtonLabel string
 }
 
 templ AddCategoryModal(props AddCategoryModalProps) {
@@ -25,7 +27,7 @@ templ AddCategoryModalContent(props AddCategoryModalProps) {
 		<button id={ constants.IdAddCategoryCloseButton } class="text-gray-50 absolute top-3 right-3" aria-label="Fechar modal">
 			<i data-lucide="x" class="text-red-500"></i>
 		</button>
-		<h2 id={ constants.IdAddCategoryModalTitle } class="font-bold">Adicionar comprovante</h2>
+		<h2 id={ constants.IdAddCategoryModalTitle } class="font-bold">{ props.Title }</h2>
 		<form id={ constants.IdAddCategoryForm } class="flex gap-4">
 			<img src={ props.Recepit.ImageName } class="w-24 h-[124px] rounded object-cover"/>
 			<div class="flex flex-col gap-8 flex-1">
@@ -43,7 +45,7 @@ templ AddCategoryModalContent(props AddCategoryModalProps) {
 					Size: ButtonSizeLarge,
 					Type: "submit",
 				}) {
-					Adicionar
+					{ props.ButtonLabel }
 				}
 			</div>
 		</form>

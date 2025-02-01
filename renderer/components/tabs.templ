@@ -1,8 +1,17 @@
 package components
 
-templ Tabs() {
-	<div class="inline-flex gap-2 text-gray-50">
-		{ children... }
+import "github.com/dudubtw/receipt/constants"
+
+type TabProps struct {
+	Id    string
+	Items []TabItemProps
+}
+
+templ Tabs(props TabProps) {
+	<div id={ props.Id } class="inline-flex gap-2 text-gray-50">
+		for _, tab := range props.Items {
+			@TabItem(tab)
+		}
 	</div>
 }
 
@@ -10,21 +19,34 @@ type TabItemProps struct {
 	Label    string
 	Value    string
 	IsActive bool
-	Id       string
 }
 
-var TabItemValueAttr = "value"
+const TabItemValueAttr = "value"
 
 func (props TabItemProps) TabItemAttr() templ.Attributes {
 	return templ.Attributes{"data-" + TabItemValueAttr: props.Value}
 }
 
+func getTabIndex(isActive bool) string {
+	if isActive {
+		return "0"
+	}
+
+	return "-1"
+}
+
 templ TabItem(props TabItemProps) {
-	<button id={ props.Id } class="inline-flex items-center justify-center whitespace-nowrap rounded px-5 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-purple-700 data-[active]:text-foreground data-[active]:shadow leading-[18px] hover:bg-background-800 bg-background-700" { props.TabItemAttr()... } data-active?={ props.IsActive }>{ props.Label } </button>
+	<button id={ constants.IdTabItem } class="inline-flex items-center justify-center whitespace-nowrap rounded px-5 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-purple-700 data-[active]:text-foreground data-[active]:shadow leading-[18px] hover:bg-background-800 bg-background-700" { props.TabItemAttr()... } data-active?={ props.IsActive } tabindex={ getTabIndex(props.IsActive) }>{ props.Label } </button>
 }
 
 templ TabContent() {
 	<div>
 		{ children... }
+	</div>
+}
+
+templ FallbackTabContent() {
+	<div>
+		Tab not found
 	</div>
 }

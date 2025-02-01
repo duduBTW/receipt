@@ -4,6 +4,7 @@
 package handlers
 
 import (
+	"fmt"
 	"syscall/js"
 
 	"github.com/dudubtw/receipt/front/jslayer"
@@ -44,6 +45,7 @@ func (cSelect *CategorySelect) New() {
 		Selector:  jslayer.Id(cSelect.Id),
 		EventType: "change",
 		Listener: func(this js.Value, args []js.Value) {
+			fmt.Println("change event")
 			if cSelect.OnValueChange == nil {
 				return
 			}
@@ -78,20 +80,25 @@ func (cSelect *CategorySelect) New() {
 	cSelect.changeEvent.Add()
 
 	// Set default value
-	cSelect.Set(cSelect.DefaultValue)
-
+	cSelect.setHTMLElement(cSelect.DefaultValue)
 }
 
 func (cSelect *CategorySelect) Remove() {
 	cSelect.changeEvent.Remove()
 }
 
-func (cSelect *CategorySelect) Set(value string) error {
+func (cSelect *CategorySelect) setHTMLElement(value string) error {
 	selectElement, err := jslayer.QuerySelector(jslayer.Id(cSelect.Id) + " select")
 	if err != nil {
 		return err
 	}
 
 	selectElement.Set("value", value)
+	return nil
+}
+
+func (cSelect *CategorySelect) Set(value string) error {
+	cSelect.setHTMLElement(value)
+	cSelect.OnValueChange(value)
 	return nil
 }

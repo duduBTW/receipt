@@ -12,30 +12,57 @@ type HomeProps struct {
 	Categories []models.Category
 }
 
+var HomeTabs = []components.TabItemProps{
+	{
+		Label:    "Categorias",
+		Value:    "categories",
+		IsActive: true,
+	},
+	{
+		Label: "Date",
+		Value: "date",
+	},
+}
+
+templ TestCategories() {
+	<div>Categories</div>
+}
+
+templ TestDate() {
+	<div>date</div>
+}
+
 templ Home(props HomeProps) {
-	<div class="container mx-auto px-4 py-8 flex flex-col gap-6">
-		@Tabs()
-		@CategoriesComponent(CategoriesComponentProps{
-			Categories: props.Categories,
+	<div class="container mx-auto px-4 py-8">
+		@Tabs(TabsProps{
+			Items: HomeTabs,
+			Body: CategoriesComponent(CategoriesComponentProps{
+				Categories: props.Categories,
+			}),
 		})
 	</div>
 	@components.StartScript(constants.JsFunctionsCreateCategory, constants.JsFunctionsHome)
 }
 
-templ Tabs() {
-	@components.Tabs() {
-		@components.TabItem(components.TabItemProps{
-			Label:    "Categorias",
-			Value:    "c",
-			Id:       "c",
-			IsActive: true,
-		})
-		@components.TabItem(components.TabItemProps{
-			Label: "Data",
-			Value: "test",
-			Id:    "test",
-		})
-	}
+type TabsProps struct {
+	Items []components.TabItemProps
+	Body  templ.Component
+}
+
+templ Tabs(props TabsProps) {
+	<div class="flex flex-col gap-6" id={ constants.IdHomeTabs }>
+		@templ.Join(TabsContent(TabsContentProps{Items: props.Items}), props.Body)
+	</div>
+}
+
+type TabsContentProps struct {
+	Items []components.TabItemProps
+}
+
+templ TabsContent(props TabsContentProps) {
+	@components.Tabs(components.TabProps{
+		Items: props.Items,
+	})
 }
 
 type CategoriesComponentProps struct {

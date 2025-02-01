@@ -188,12 +188,16 @@ func IsFocused(element js.Value) bool {
 	return activeElement.Equal(element)
 }
 
+func FocusElement(element js.Value) {
+	element.Call("focus")
+}
+
 func Focus(selector string) error {
 	element, err := QuerySelector(selector)
 	if err != nil {
 		return err
 	}
-	element.Call("focus")
+	FocusElement(element)
 	return nil
 }
 
@@ -211,4 +215,8 @@ type JSON struct {
 
 func (json JSON) Stringify() string {
 	return js.Global().Get("JSON").Call("stringify", json.Value).String()
+}
+
+func PreventDefault(event js.Value) {
+	event.Call("preventDefault")
 }
