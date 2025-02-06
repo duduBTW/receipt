@@ -30,4 +30,8 @@ const (
 
 	// Tabs
 	IdTabItem = "tab-item"
+
+	// Snackbar
+	IdSnackbarContainer   = "snackbar-container"
+	IdSnackbarCloseButton = "snackbar-close-btn"
 )

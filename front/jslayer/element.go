@@ -3,14 +3,33 @@
 
 package jslayer
 
-import "syscall/js"
+import (
+	"syscall/js"
+
+	"github.com/a-h/templ"
+)
 
 type ElementSchema struct {
-	Element js.Value
+	Element  js.Value
+	selector string
 }
 
 func (schema ElementSchema) TextContent() string {
 	return schema.Element.Get("textContent").String()
+}
+
+func (schema ElementSchema) SetAttr(name, value string) {
+	SetAttr(schema.Element, name, value)
+}
+
+// Removes the element from the DOM.
+func (schema ElementSchema) Remove() {
+	schema.Element.Call("remove")
+}
+
+func (schema ElementSchema) AppendHTMLInside(component templ.Component) error {
+	AppendHTMLInside(schema.selector, component)
+	return nil
 }
 
 func Element(selector string) (ElementSchema, error) {
@@ -20,6 +39,7 @@ func Element(selector string) (ElementSchema, error) {
 		return schema, err
 	}
 
+	schema.selector = selector
 	schema.Element = element
 	return schema, nil
 }

@@ -12,7 +12,8 @@ import (
 	"github.com/dudubtw/receipt/wasm"
 )
 
-type GlobalDefiner struct{}
+type GlobalDefiner struct {
+}
 
 var Global = GlobalDefiner{}
 

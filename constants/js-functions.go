@@ -6,4 +6,5 @@ const (
 	JsFunctionsHome           = "home"
 	JsFunctionsImageModal     = "imageModal"
 	JsStopApp                 = "stopApp"
+	JsSnackbar                = "snackbar"
 )

@@ -37,4 +37,19 @@
     -webkit-appearance: none;
     -moz-appearance: none;
   }
+
+  @keyframes slide-in {
+    from {
+      height: 0;
+    }
+    to {
+      height: 48px;
+    }
+  }
+
+  .animate-slide-in {
+    animation-name: slide-in;
+    animation-duration: 150ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

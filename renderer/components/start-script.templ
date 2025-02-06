@@ -3,7 +3,7 @@ package components
 import "github.com/dudubtw/receipt/constants"
 
 func functionNamesWithDefault(functionNames []string) []string {
-	var defaultFunctionNames = []string{constants.JsFunctionsImageModal}
+	var defaultFunctionNames = []string{constants.JsFunctionsImageModal, constants.JsSnackbar}
 	defaultFunctionNames = append(defaultFunctionNames, functionNames...)
 	return defaultFunctionNames
 }

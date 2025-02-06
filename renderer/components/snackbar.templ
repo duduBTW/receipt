@@ -1,0 +1,39 @@
+package components
+
+import "github.com/dudubtw/receipt/constants"
+
+type SnackbarStatus string
+
+const (
+	SnackbarSuccess SnackbarStatus = "success"
+	SnackbarError   SnackbarStatus = "error"
+	SnackbarInfo    SnackbarStatus = "info"
+)
+
+templ SnackbarContainer() {
+	<div class="fixed bottom-0 left-1/2 -translate-x-1/2 flex flex-col gap-2 items-center justify-end pb-3" id={ constants.IdSnackbarContainer }></div>
+}
+
+var SnackbarStatusToIcon = map[SnackbarStatus]string{
+	SnackbarSuccess: "badge-check",
+	SnackbarError:   "ban",
+	SnackbarInfo:    "circle-alert",
+}
+
+type SnackbarProps struct {
+	Status SnackbarStatus
+	Label  string
+	Id     string
+}
+
+templ Snackbar(props SnackbarProps) {
+	<div id={ props.Id } class="data-[closing=true]:h-0 h-[48px] transition-all animate-slide-in">
+		<div class="flex gap-2 items-center px-4 py-3 rounded bg-black">
+			<i class="text-gray-400" data-lucide={ SnackbarStatusToIcon[props.Status] }></i>
+			<div class="text-base">{ props.Label }</div>
+			<button id={ constants.IdSnackbarCloseButton } class="ml-1">
+				<i aria-hidden="true" data-lucide="x"></i>
+			</button>
+		</div>
+	</div>
+}

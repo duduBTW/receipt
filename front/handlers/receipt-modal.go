@@ -166,7 +166,7 @@ func ReceiptModal(params ReceiptModalParams) ReceiptModalActions {
 			})
 
 			if err != nil {
-				fmt.Println("Failed to submit modal", err)
+				Global.Snackbar(components.SnackbarError, "Failed to submit modal", err)
 				return
 			}
 

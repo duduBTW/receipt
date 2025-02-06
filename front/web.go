@@ -22,6 +22,7 @@ func main() {
 	// Global
 	jslayer.RegisterFunction(constants.JsFunctionsImageModal, handlers.ImageModalSetup)
 	jslayer.RegisterFunction(constants.JsStopApp, stopApp)
+	jslayer.RegisterFunction(constants.JsSnackbar, handlers.SnackbarSetup)
 
 	// Page specific stuff
 	jslayer.RegisterFunction(constants.JsFunctionsCreateCategory, handlers.CreateModalSetup)
