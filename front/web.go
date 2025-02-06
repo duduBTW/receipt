@@ -11,11 +11,17 @@ import (
 	jslayer "github.com/dudubtw/receipt/front/jslayer"
 )
 
-func main() {
-	c := make(chan struct{}, 0)
+var appChan = make(chan struct{})
 
+func stopApp() func() {
+	close(appChan)
+	return func() {}
+}
+
+func main() {
 	// Global
 	jslayer.RegisterFunction(constants.JsFunctionsImageModal, handlers.ImageModalSetup)
+	jslayer.RegisterFunction(constants.JsStopApp, stopApp)
 
 	// Page specific stuff
 	jslayer.RegisterFunction(constants.JsFunctionsCreateCategory, handlers.CreateModalSetup)
@@ -31,5 +37,5 @@ func main() {
 	defer loadCallback.Release()
 
 	js.Global().Call("addEventListener", "load", loadCallback)
-	<-c
+	<-appChan
 }

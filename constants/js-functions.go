@@ -5,4 +5,5 @@ const (
 	JsFunctionsReceipts       = "receipts"
 	JsFunctionsHome           = "home"
 	JsFunctionsImageModal     = "imageModal"
+	JsStopApp                 = "stopApp"
 )

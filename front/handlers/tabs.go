@@ -105,6 +105,7 @@ func (state *TabState) New(getBody func(pages.TabsContentProps) templ.Component)
 		OnMounted: func(value pages.TabsContentProps) {
 			jslayer.AddEvents(state.events)
 			focus()
+			jslayer.CreateIcons()
 		},
 	}
 

@@ -11,6 +11,7 @@ import (
 	"syscall/js"
 
 	"github.com/a-h/templ"
+	"github.com/dudubtw/receipt/constants"
 )
 
 const Window = "string"
@@ -18,7 +19,7 @@ const Window = "string"
 func GetElementById(id string) (js.Value, error) {
 	element := js.Global().Get("document").Call("getElementById", id)
 	if IsNil(element) {
-		return element, errors.New("Element not found")
+		return element, errors.New("Id: " + id + " element not found")
 	}
 
 	return element, nil
@@ -31,7 +32,7 @@ func QuerySelector(selector string) (js.Value, error) {
 
 	element := js.Global().Get("document").Call("querySelector", selector)
 	if IsNil(element) {
-		return element, errors.New("Element not found")
+		return element, errors.New("Single: " + selector + "element not found")
 	}
 
 	return element, nil
@@ -47,7 +48,7 @@ func ElementQuerySelectorAll(element js.Value, selector string) ([]js.Value, err
 
 	nodeList := element.Call("querySelectorAll", selector)
 	if IsNil(nodeList) {
-		return nil, errors.New("Element not found")
+		return nil, errors.New("Multiple: " + selector + " elements not found")
 	}
 
 	var elements []js.Value
@@ -219,4 +220,24 @@ func (json JSON) Stringify() string {
 
 func PreventDefault(event js.Value) {
 	event.Call("preventDefault")
+}
+
+func JsonData[T any](id string) (T, error) {
+	var result T
+	element, err := Element(Id(id))
+	if err != nil {
+		return result, err
+	}
+
+	var htmlJson = element.TextContent()
+	err = json.Unmarshal([]byte(htmlJson), &result)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func StopApp() {
+	js.Global().Call(constants.JsStopApp)
 }

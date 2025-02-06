@@ -1,0 +1,14 @@
+package pages
+
+templ Error(message string) {
+	{{ tehe := "`(*>﹏<*)′" }}
+	<div class="w-screen h-screen bg-black flex flex-col gap-6 items-center justify-center">
+		<h1 class="text-lg font-medium">Something went wrong! { tehe }</h1>
+		if message != "" {
+			<div class="p-2 px-3 bg-red-100 rounded border border-red-400 max-w-md">
+				<div class="text-sm font-medium mb-1 text-red-600">Error</div>
+				<div class="text-red-950">{ message }</div>
+			</div>
+		}
+	</div>
+}

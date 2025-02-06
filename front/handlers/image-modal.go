@@ -4,7 +4,6 @@
 package handlers
 
 import (
-	"fmt"
 	"syscall/js"
 
 	"github.com/dudubtw/receipt/constants"
@@ -13,11 +12,9 @@ import (
 )
 
 var openModalFn = func(imageUrl string) {
-	fmt.Println("Not implemented!")
+	GlobalFail()
 }
-var closeModalFn = func() {
-	fmt.Println("Not implemented!")
-}
+var closeModalFn = GlobalFail
 
 func (GlobalDefiner) OpenImage(imageUrl string) {
 	openModalFn(imageUrl)

@@ -17,6 +17,7 @@ const (
 	// Home
 	IdCategoryCard = "category-card"
 	IdHomeTabs     = "home-tabs"
+	IdHomeData     = "home-data"
 
 	// Recepits page
 	IdReceiptsSelectCategory = "recepits-select-category"

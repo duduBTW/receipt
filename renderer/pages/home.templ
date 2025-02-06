@@ -42,6 +42,7 @@ templ Home(props HomeProps) {
 		})
 	</div>
 	@components.StartScript(constants.JsFunctionsCreateCategory, constants.JsFunctionsHome)
+	@templ.JSONScript(constants.IdHomeData, props.Categories)
 }
 
 type TabsProps struct {
